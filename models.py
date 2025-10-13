@@ -1,7 +1,8 @@
 from typing import Optional
 from database import Base
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
-from pydantic import BaseModel,Field
+from pydantic import BaseModel, Field, field_validator
+
 
 class Todos(Base):
     __tablename__ = 'todos'
@@ -24,6 +25,10 @@ class Users(Base):
     hashed_password = Column(String)
     isActive = Column(Boolean,default=True)
     role = Column(String)
+
+    @field_validator("role")
+    def role_lowercase(cls,v):
+        return v.casefold()
 
 class UserRequest(BaseModel):
     username:str = Field(...,min_length=4,max_length=10,description="Username")

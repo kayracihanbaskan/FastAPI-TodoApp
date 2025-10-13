@@ -39,7 +39,7 @@ async def create_todo(user:user_dependency,todo:TodoRequest,db:Session=Depends(g
 @router.delete("/todo/delete/{todo_id}")
 async def delete_todo(user:user_dependency,todo_id: int, db: Session = Depends(get_db)):
     todo = db.query(models.Todos).filter(models.Todos.id.__eq__(todo_id) and models.Todos.owner_id.__eq__(user.get('id'))).first()
-    if not todo:
+    if not todo and user.get('role').__ne__('Admin'):
         raise HTTPException(status_code=404, detail="Todo not found")
     db.delete(todo)
     db.commit()
