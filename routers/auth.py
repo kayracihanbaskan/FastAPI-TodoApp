@@ -23,7 +23,7 @@ REFRESH_SECRET_KEY = 'kCuKriXlCkU1vM2bixz6ow2A4OH8WQpu7LR0NW9RsPngodqtm4J3WetnA2
 ALGORITHM = 'HS256'
 
 bcrypt_context = CryptContext(schemes=["bcrypt"],deprecated='auto')
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl='token')
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/user/login')
 
 @router.post("/user/create/")
 async def create_user(create_user_request:UserRequest,db:Session=Depends(get_db)):
