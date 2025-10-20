@@ -10,7 +10,7 @@ def test_return_health_check():
     assert  response.json() == {'status':'Healthy'}
 
 def get_auth_header():
-    response = client.post("/auth/user/login",data={'username':'kayrabk','password':'k123k'})
+    response = client.post("/auth/user/login",data={'username':'yourusername','password':'yourpassword'})
     assert response.status_code == status.HTTP_200_OK
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
