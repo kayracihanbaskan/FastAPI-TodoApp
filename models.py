@@ -11,7 +11,7 @@ class Todos(Base):
     title = Column(String)
     description = Column(String)
     priority = Column(Integer)
-    isComplete = Column(Boolean,default=False)
+    isComplete = Column("complete",Boolean,default=False)
     owner_id = Column(Integer,ForeignKey("users.id"))
 
 class Users(Base):
@@ -19,12 +19,13 @@ class Users(Base):
 
     id = Column(Integer,primary_key=True,unique=True,index=True,autoincrement=True)
     username = Column(String,unique=True)
-    name = Column(String)
-    surname = Column(String)
+    name = Column("first_name",String)
+    surname = Column("last_name",String)
     email = Column(String,unique=True)
     hashed_password = Column(String)
-    isActive = Column(Boolean,default=True)
+    isActive = Column("is_active",Boolean,default=True)
     role = Column(String)
+    phone_number = Column("phone",String)
 
     @field_validator("role")
     def role_lowercase(cls,v):
@@ -44,6 +45,12 @@ class UserPatchRequest(BaseModel):
     surname :Optional[str]
     isActive : Optional[bool]
     role : Optional[str]
+    phone_number : Optional[str]
+
+class UserChangePasswordRequestModel(BaseModel):
+    old_password : Optional[str]
+    new_password : Optional[str]
+    confirm_password : Optional[str]
 
 class Token(BaseModel):
     access_token : str

@@ -9,7 +9,7 @@ from typing import Annotated
 import models
 from database import get_db
 from sqlalchemy.orm import Session
-from models import UserRequest, Token ,UserPatchRequest
+from models import UserRequest, Token ,UserPatchRequest,UserChangePasswordRequestModel
 
 from jose import jwt, JWTError
 
@@ -125,5 +125,32 @@ async def update_user_by_id(user_id:int,user_request:UserPatchRequest,db:Session
         "message":"Updated Successfully",
         "user":user_get
     }
+
+@router.patch("/user/change-password/{user_id}")
+async def change_password(
+    user_id: int,
+    user_password_request: UserChangePasswordRequestModel,
+    db: Session = Depends(get_db),
+):
+    user = db.query(models.Users).filter_by(id=user_id).first()
+
+    if not user or not bcrypt_context.verify(user_password_request.old_password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid user or password")
+
+    if user_password_request.old_password == user_password_request.new_password:
+        raise HTTPException(status_code=400, detail="New password cannot be the same as old password")
+
+    if user_password_request.new_password != user_password_request.confirm_password:
+        raise HTTPException(status_code=400, detail="Passwords do not match")
+
+    user.hashed_password = bcrypt_context.hash(user_password_request.new_password)
+
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    return {"message": "Password updated successfully"}
+
+
 
 
